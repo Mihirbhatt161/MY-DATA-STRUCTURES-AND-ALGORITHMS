@@ -1,1 +1,146 @@
+QUES : 1
+
+What is the time, space complexity of following code :
+
+        int a = 0, b = 0;    
+        for (i = 0; i < N; i++) {
+            a = a + rand();  
+        }
+        for (j = 0; j < M; j++) {
+            b = b + rand();
+        }
+Assume that rand() is O(1) time, O(1) space function.
+
+SOL : 1 
+
+The first loop is O(N) and the second loop is O(M). Since you don't know which is bigger, you say **this is O(N + M)**. This can also be written as O(max(N, M)).
+
+Since there is no additional space being utilised, the space complexity is constant / O(1)
+
+QUES : 2
+
+What is time complexity of following code :
+
+        int count = 0;
+        for (int i = N; i > 0; i /= 2) {
+            for (int j = 0; j < i; j++) {
+                count += 1;
+            }
+        }
+        
+SOL : 2 
+
+In the first iteration, the j loop runs N times.
+
+In the second iteration, the j loop runs N / 2 times. 
+
+In the ith iteration, the j loop runs N / 2^i times. 
+
+So, the total number of runs of loop = N + N / 2 + N / 4 + ... 1 
+
+= **N * ( 1 + 1/2 + 1/4 + 1/8 + ... ) < 2 * N** 
+
+QUES : 3 
+
+What is the time complexity of the following code :
+
+        int j = 0;
+        for(int i = 0; i < n; ++i) {
+            while(j < n && arr[i] < arr[j]) {
+                j++;
+            }
+        }
+        
+SOL : 3
+
+In the first look, the time complexity seems to be O(n^2) due to two loops.
+
+However, note that the variable j is not initialized for each value of variable i.
+
+QUES : 4
+
+What is the worst case time complexity of the following code:
+
+int memo[101][101];
+int findMinPath(vector<vector<int> >& V, int r, int c) {
+  int R = V.size();
+  int C = V[0].size();
+  if (r >= R || c >= C) return 100000000; // Infinity
+  if (r == R - 1 && c == C - 1) return 0;
+  if (memo[r][c] != -1) return memo[r][c];
+  memo[r][c] =  V[r][c] + min(findMinPath(V, r + 1, c), findMinPath(V, r, c + 1));
+  return memo[r][c];
+}
+
+Callsite : 
+memset(memo, -1, sizeof(memo));
+findMinPath(V, 0, 0);
+Assume R = V.size() and C = V[0].size() and V has positive elements
+
+SOL : 4 
+
+Note that for a given `(r, c)`
+ 
+the following code will not be executed more than once : 
+
+memo[r][c] =  V[r][c] + min(findMinPath(V, r + 1, c), findMinPath(V, r, c + 1));
+
+
+Once memo[r][c] is set, the functions will return at 
+
+if (memo[r][c] != -1) return memo[r][c];
+
+
+So, every function ends up calling other functions at most 1 time. 
+In other words, every function ends up executing atmost O(1) times (Note that you can shift the part about checking for memo[r][c] != -1 at the callsite ).
+
+`O(R * C)` possible number of combinations are possible for `(r, c)`
+Hence, the time complexity of the function : O(R*C)
+
+
+QUES : 5 
+
+What is the worst case time complexity of the following code :
+
+/* 
+ * V is sorted 
+ * V.size() = N
+ * The function is initially called as searchNumOccurrence(V, k, 0, N-1)
+ */
+int searchNumOccurrence(vector<int> &V, int k, int start, int end) {
+    if (start > end) return 0;
+    int mid = (start + end) / 2;
+    if (V[mid] < k) return searchNumOccurrence(V, k, mid + 1, end);
+    if (V[mid] > k) return searchNumOccurrence(V, k, start, mid - 1);
+    return searchNumOccurrence(V, k, start, mid - 1) + 1 + searchNumOccurrence(V, k, mid + 1, end);
+}
+
+SOL : 5 
+
+It might seem at the first look that the program is O(log N). 
+However, the last case 
+
+return searchNumOccurrence(V, k, start, mid - 1) + 1 + searchNumOccurrence(V, k, mid + 1, end);
+
+
+is the bottleneck step. 
+Assuming all the values in the array are the same, we get the following relation : 
+
+T(N) = 2 * T(N/2) + constant
+
+     = 4 * T(N/4) + constant     ( 2 * constant = another constant ) 
+
+     = 8 * T(N/8) + constant 
+
+     …
+
+     = N * T(N/N) + constant 
+
+     = N + constant 
+
+     = O(N)
+
+
+
+
 
